@@ -10,7 +10,7 @@ Many cloud providers charge a fee to host files in the cloud, however, I was alr
 
 
 ## ❤️ The Solution
-Image Uploader allows you to upload image-based files to the cloud, and get a link that leasds directly to the image.
+Image Uploader allows you to upload image-based files to the cloud, and get a link that leads directly to the image.
 
 
 ## 🔨 Setup
