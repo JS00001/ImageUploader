@@ -2,7 +2,7 @@ import axios, { AxiosResponse} from 'axios'
 import FormData from 'form-data'
 import { FileWithPath } from 'react-dropzone'
 
-const baseUrl = 'http://localhost:8080'
+const baseUrl = 'https://jsen-backend.herokuapp.com'
 
 export default {
   upload: (file: FileWithPath): Promise<AxiosResponse> => {
