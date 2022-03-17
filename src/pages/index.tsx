@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AxiosResponse } from 'axios'
-import { useDropzone, FileWithPath } from 'react-dropzone'
+import { useDropzone, FileWithPath, FileRejection } from 'react-dropzone'
 import { RiFileUploadLine } from 'react-icons/ri'
 
 import api from '../api'
@@ -12,6 +12,7 @@ interface IFile {
   [key: number]: {
     file: FileWithPath
     completed: boolean
+    error: boolean
     url: string | null
   }
 }
@@ -21,26 +22,46 @@ export default function () {
   const [files, setFiles] = useState<IFile>({})
 
   const onDropAccepted = async (file: Array<FileWithPath>) => {
-    const newFile: IFile = {
-      [fileIndex]: {
-        file: file[0],
-        completed: false,
-        url: null,
-      },
-    }
-    setFiles({ ...files, ...newFile })
+    file.forEach(async (f) => {
+      const newFile: IFile = {
+        [fileIndex]: {
+          file: f,
+          completed: false,
+          error: false,
+          url: null,
+        },
+      }
+      setFiles({ ...files, ...newFile })
 
-    const res: AxiosResponse = await api.upload(file[0])
+      const res: AxiosResponse = await api.upload(file[0])
 
-    const completedFile: IFile = {
-      [fileIndex]: {
-        file: file[0],
-        completed: true,
-        url: res.data.message,
-      },
-    }
-    setFileIndex(fileIndex + 1)
-    setFiles({ ...files, ...completedFile })
+      const completedFile: IFile = {
+        [fileIndex]: {
+          file: f,
+          completed: true,
+          error: false,
+          url: res.data.message,
+        },
+      }
+      setFileIndex(fileIndex + 1)
+      setFiles({ ...files, ...completedFile })
+    })
+  }
+
+  const onDropRejected = (file: Array<FileRejection>) => {
+    file.forEach((f) => {
+      const rejectedFile: IFile = {
+        [fileIndex]: {
+          file: f.file,
+          completed: false,
+          error: true,
+          url: null,
+        },
+      }
+
+      setFileIndex(fileIndex + 1)
+      setFiles({ ...files, ...rejectedFile })
+    })
   }
 
   const clearUploads = () => {
@@ -52,6 +73,7 @@ export default function () {
     accept: 'image/*',
     maxFiles: 1,
     onDropAccepted,
+    onDropRejected,
   })
 
   return (

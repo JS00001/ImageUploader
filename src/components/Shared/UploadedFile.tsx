@@ -1,17 +1,24 @@
 import { CgSpinner } from 'react-icons/cg'
 import React, { HTMLAttributes } from 'react'
 import { FileWithPath } from 'react-dropzone'
-import { RiFileCloudLine, RiLinkM, RiCheckboxCircleFill } from 'react-icons/ri'
+import {
+  RiFileCloudLine,
+  RiLinkM,
+  RiCheckboxCircleFill,
+  RiCloseCircleFill,
+} from 'react-icons/ri'
 
 export type UploadedFile = HTMLAttributes<HTMLDivElement> & {
   file: FileWithPath
   completed?: boolean
+  error?: boolean
   url?: string
 }
 
 export const UploadedFile: React.FC<UploadedFile> = ({
   file,
   url = '',
+  error = false,
   completed = false,
   ...props
 }) => {
@@ -28,13 +35,19 @@ export const UploadedFile: React.FC<UploadedFile> = ({
           <div className="mr-5">
             <RiFileCloudLine size={30} />
           </div>
-          <div className="flex flex-col">
+          <div className={`flex flex-col ${error && 'text-red-400'}`}>
             <span className="text-sm font-medium">{file.path}</span>
             <span className="text-xs font-medium">{size}</span>
           </div>
         </div>
 
-        {completed && (
+        {error && (
+          <div className="space-x-2">
+            <RiCloseCircleFill size={22} className="text-red-500" />
+          </div>
+        )}
+
+        {completed && !error && (
           <div className="flex flex-row items-center space-x-2">
             <RiLinkM
               size={22}
@@ -45,7 +58,7 @@ export const UploadedFile: React.FC<UploadedFile> = ({
           </div>
         )}
 
-        {!completed && (
+        {!completed && !error && (
           <div className="flex flex-row items-center space-x-2">
             <RiLinkM size={22} className="text-gray-200" />
             <CgSpinner size={22} className="animate-spin text-slate-500" />
